@@ -8,7 +8,7 @@ import { Button } from './button'
 // 2. Extend the theme to include custom colors, fonts, etc
 export const theme = extendTheme({
   brand: {
-    100: "#FF3C00",
+    100: "#cd5418",
   },
   fonts: {
     body: `'Open Sans', sans-serif` ,

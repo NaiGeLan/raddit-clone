@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Modal,
   ModalOverlay,
@@ -11,51 +11,74 @@ import {
   Button,
   useDisclosure,
   Flex,
+  Text
 } from '@chakra-ui/react'
 import { useRecoilState } from 'recoil'
 import { authModalState } from '@/src/atoms/authModalAtom'
-
+import AuthInputs from './AuthInput'
+import OAuthButtons from './OAuthButton'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '@/src/firebase/clientApp'
+import ResetPassword from './ResetPassword'
 const AuthModal = () => {
   const [modalState, setModalState] = useRecoilState(authModalState)
+  const [user, loading, error] = useAuthState(auth)
   const handleClose = () => {
     setModalState((prev) => ({
       ...prev,
       open: false,
     }))
   }
-  const handleOpen = () => {
-    setModalState((prev) => ({
-      ...prev,
-      open: true,
-    }))
-  }
-  const finalRef = React.useRef(null)
+  const toggleView = (view: string) => {
+    setModalState({
+      ...modalState,
+      view: view as typeof modalState.view,
+    });
+  };
+  useEffect(() => {
+    if(user){
+      handleClose()
+      console.log(user)
+    }
+  },[user])
+
 
   return (
     <>
-      <Modal finalFocusRef={finalRef} isOpen={modalState.open} onClose={handleClose}>
+      <Modal isOpen={modalState.open} onClose={handleClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
+          <ModalHeader textAlign="center" >
             {modalState.view === "login" && "Login"}
             {modalState.view === "signup" && "Sign Up"}
             {modalState.view === "resetPassword" && "Reset Password"}
           </ModalHeader>
           <ModalCloseButton />
 
-          <ModalBody display="flex" flexDirection='column' alignItems='center' justifyContent="center">
-            Body
-            <Flex>
+          <ModalBody  display="flex" flexDirection='column' alignItems='center' justifyContent="center">
+            
+            <Flex 
+              direction="column"
+              align="center"
+              justify="center"
+              width="70%"
+            >
               
+              {
+                modalState.view === "resetPassword" ?
+                <ResetPassword  toggleView={toggleView}></ResetPassword> :
+                (
+                  <>
+                    <OAuthButtons></OAuthButtons>
+                    <Text color="gray.500" fontWeight={500}>OR</Text>
+                    <AuthInputs toggleView={toggleView}></AuthInputs>
+                  </>
+                )
+              }
             </Flex>
           </ModalBody>
 
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant='ghost'>Secondary Action</Button>
-          </ModalFooter>
+          
         </ModalContent>
       </Modal>
     </>

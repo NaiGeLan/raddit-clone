@@ -2,6 +2,10 @@ import { CheckIcon, PhoneIcon, SearchIcon } from "@chakra-ui/icons"
 import { Flex, Image, Input, InputGroup, InputLeftElement, InputRightElement } from "@chakra-ui/react"
 import React from "react"
 
+/**
+ * 搜索框
+ * @returns 
+ */
 const SearchInput = () => {
   return (
     <>
