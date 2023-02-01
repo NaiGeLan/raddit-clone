@@ -1,14 +1,12 @@
-import React from "react";
-import Navbar from '../Navbar/Navbar'
+import React from 'react';
+import Navbar from '../Navbar/Navbar';
 const Layout = ({ children }: any) => {
   return (
     <>
       <Navbar></Navbar>
-      <main>
-        {children}
-      </main>
+      <main>{children}</main>
     </>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;
