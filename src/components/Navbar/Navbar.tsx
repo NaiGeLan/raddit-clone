@@ -4,6 +4,7 @@ import SearchInput from './SearchInput';
 import RightContent from './RightContent/RightContent';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/src/firebase/clientApp';
+import Directory from './Directory/Directory';
 
 /**
  * 导航栏
@@ -22,6 +23,7 @@ const Navbar = () => {
             height='46px'
             display={{ base: 'none', md: 'unset' }}
           ></Image>
+          { user && <Directory />}
         </Flex>
         {/* 搜索框 */}
         <SearchInput></SearchInput>
