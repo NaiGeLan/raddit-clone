@@ -12,6 +12,8 @@ import MenuListItem from "./MenuListItem";
 const Community = () => {
   const [open, setOpen] = useState(false)
   const [user] = useAuthState(auth);
+  console.log(user)
+  
   const mySnippets = useRecoilValue(communityState).mySnippets
   return (
     <>

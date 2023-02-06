@@ -2,11 +2,11 @@ import { Box, Button, Checkbox, Divider, Flex, Text, Icon, Input, Modal, ModalBo
 import React, { useState } from "react"
 import { BsFillPersonFill, BsFillEyeFill } from "react-icons/bs"
 import { HiLockClosed } from "react-icons/hi";
-import { doc, Firestore, runTransaction, serverTimestamp } from "firebase/firestore"
-import { firestore } from "@/src/firebase/clientApp"
 import { useSetRecoilState } from "recoil"
 import { communityState } from "@/src/atoms/communityAtom"
 import router from "next/router"
+import { defHttp } from '@/src/service/http'
+
 type CreateCommunityModalType = {
   open: boolean
   handleClose: () => void
@@ -16,7 +16,7 @@ type CreateCommunityModalType = {
 const CreateCommunityModal:React.FC<CreateCommunityModalType> = ({open, handleClose, userId}) => {
   const [name, setName] = useState("");
   const [charsRemaining, setCharsRemaining] = useState(21);
-  const [communityType, setCommunityType] = useState("public");
+  const [privacyType, setprivacyType] = useState("public");
   const [nameError, setNameError] = useState("");
   const [loading, setLoading] = useState(false);
   const setSnippetState = useSetRecoilState(communityState);
@@ -25,14 +25,14 @@ const CreateCommunityModal:React.FC<CreateCommunityModalType> = ({open, handleCl
     setName(event.target.value);
     setCharsRemaining(21 - event.target.value.length);
   };
-  const onCommunityTypeChange = (
+  const onprivacyTypeChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const {
       target: { name },
     } = event;
-    if (name === communityType) return;
-    setCommunityType(name);
+    if (name === privacyType) return;
+    setprivacyType(name);
   };
   const handleCreateCommunity = async () => {
     if (nameError) setNameError("");
@@ -46,46 +46,44 @@ const CreateCommunityModal:React.FC<CreateCommunityModalType> = ({open, handleCl
 
     setLoading(true);
     try {
-      // Create community document and communitySnippet subcollection document on user
-      const communityDocRef = doc(firestore, "communities", name);
-      console.log(communityDocRef);
-      await runTransaction(firestore, async (transaction) => {
-        const communityDoc = await transaction.get(communityDocRef);
-        if (communityDoc.exists()) {
+      // const data = {
+      //   communityName: name
+      // }
+      const res = await defHttp.get({ url:`community/get/${name}`});
+      if(!res.data) {
+        setLoading(false)
           return setNameError(
             `Sorry, /r${name} is taken. Try another.`
           );
-          // throw new Error(`Sorry, /r${name} is taken. Try another.`);
-        }
-
-        transaction.set(communityDocRef, {
-          creatorId: userId,
-          createdAt: serverTimestamp(),
-          numberOfMembers: 1,
-          privacyType: "public",
-        });
-
-        transaction.set(
-          doc(firestore, `users/${userId}/communitySnippets`, name),
-          {
-            communityId: name,
-            isModerator: true,
-          }
-        );
+          
+      }
+      console.log(res)
+      // Create community document and communitySnippet subcollection document on user
+      const data = {
+        name,
+        userId,
+        privacyType
+      }
+      const comunity = await defHttp.post({url:'community/create', params: data});
+      if(comunity.code !== 200){
+        setLoading(false)
+        //   setNameError('')
+        //   handleClose();
+      }
+      console.log(comunity);
         setNameError('')
         handleClose();
-      });
     } catch (error: any) {
-      console.log("Transaction error", error);
+      console.log("error", error);
       setNameError(error.message);
     }
-    setSnippetState((prev) => ({
-      ...prev,
-      mySnippets: [],
-    }));
+    // setSnippetState((prev) => ({
+    //   ...prev,
+    //   mySnippets: [],
+    // }));
     
-    router.push(`r/${name}`);
-    setLoading(false);
+    // router.push(`r/${name}`);
+    // setLoading(false);
   };
   return (
     <>
@@ -147,8 +145,8 @@ const CreateCommunityModal:React.FC<CreateCommunityModalType> = ({open, handleCl
               <Checkbox
                 colorScheme="blue"
                 name="public"
-                isChecked={communityType === "public"}
-                onChange={onCommunityTypeChange}
+                isChecked={privacyType === "public"}
+                onChange={onprivacyTypeChange}
               >
                 <Flex alignItems="center">
                   <Icon as={BsFillPersonFill} mr={2} color="gray.500" />
@@ -163,8 +161,8 @@ const CreateCommunityModal:React.FC<CreateCommunityModalType> = ({open, handleCl
               <Checkbox
                 colorScheme="blue"
                 name="restricted"
-                isChecked={communityType === "restricted"}
-                onChange={onCommunityTypeChange}
+                isChecked={privacyType === "restricted"}
+                onChange={onprivacyTypeChange}
               >
                 <Flex alignItems="center">
                   <Icon as={BsFillEyeFill} color="gray.500" mr={2} />
@@ -180,8 +178,8 @@ const CreateCommunityModal:React.FC<CreateCommunityModalType> = ({open, handleCl
               <Checkbox
                 colorScheme="blue"
                 name="private"
-                isChecked={communityType === "private"}
-                onChange={onCommunityTypeChange}
+                isChecked={privacyType === "private"}
+                onChange={onprivacyTypeChange}
               >
                 <Flex alignItems="center">
                   <Icon as={HiLockClosed} color="gray.500" mr={2} />
