@@ -5,7 +5,7 @@ import { HiLockClosed } from "react-icons/hi";
 import { useSetRecoilState } from "recoil"
 import { communityState } from "@/src/atoms/communityAtom"
 import router from "next/router"
-import { defHttp } from '@/src/service/http'
+import  {get,post} from '@/src/util/request'
 
 type CreateCommunityModalType = {
   open: boolean
@@ -49,13 +49,12 @@ const CreateCommunityModal:React.FC<CreateCommunityModalType> = ({open, handleCl
       // const data = {
       //   communityName: name
       // }
-      const res = await defHttp.get({ url:`community/get/${name}`});
-      if(!res.data) {
+      const res = await get<boolean>(`community/get/${name}`);
+      if(!res) {
         setLoading(false)
           return setNameError(
-            `Sorry, /r${name} is taken. Try another.`
+            `Sorry, ${name} is taken. Try another.`
           );
-          
       }
       console.log(res)
       // Create community document and communitySnippet subcollection document on user
@@ -64,10 +63,10 @@ const CreateCommunityModal:React.FC<CreateCommunityModalType> = ({open, handleCl
         userId,
         privacyType
       }
-      const comunity = await defHttp.post({url:'community/create', params: data});
-      if(comunity.code !== 200){
+      const comunity = await post('community/create', data);
+      if(comunity){
         setLoading(false)
-        //   setNameError('')
+          setNameError('')
         //   handleClose();
       }
       console.log(comunity);

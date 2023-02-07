@@ -1,8 +1,7 @@
-import {  Prisma } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from '@/src/db'
-import { CODE } from '@/src/utils/codeUtil'
-import Result from '@/src/utils/resUtil'
+import { CODE } from '@/src/util/codeutil'
+import Result from '@/src/util/resUtil'
 
 async function create(
   req: NextApiRequest,
@@ -30,8 +29,6 @@ async function create(
     return res.status(200).json(Result.fail(CODE.BUSINESS_ERROR,error));
   }
   
-  
-
 }
 
 

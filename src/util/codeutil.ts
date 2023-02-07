@@ -6,4 +6,3 @@ export const CODE = {
   BUSINESS_ERROR: 40001, // 业务请求失败
   AUTH_ERROR: 50001, // 认证失败或者TOKEN过期
 }
-
