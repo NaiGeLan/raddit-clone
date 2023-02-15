@@ -6,6 +6,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/src/firebase/clientApp';
 import Directory from './Directory/Directory';
 
+
 /**
  * 导航栏
  * @returns
@@ -13,6 +14,8 @@ import Directory from './Directory/Directory';
 const Navbar = () => {
   // 调用Auth 获取当前用户
   const [user, loading, error] = useAuthState(auth);
+  console.log(user);
+  
   return (
     <>
       <Flex bg='white' height='44px' padding='6px 12px' align='center'>

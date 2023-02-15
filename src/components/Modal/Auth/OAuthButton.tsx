@@ -1,5 +1,6 @@
 import { auth } from '@/src/firebase/clientApp';
 import { Button, Flex, Image, Text } from '@chakra-ui/react';
+import { signIn, useSession } from 'next-auth/react';
 import React from 'react';
 import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 
@@ -10,7 +11,7 @@ import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 const OAuthButtons = () => {
   
   const [signInWithGoogle, _, loading, error] = useSignInWithGoogle(auth);
-
+  const { data: session } = useSession()
   return (
     <Flex direction='column'>
       <Button variant='oauth' mb={2} onClick={() => signInWithGoogle()} isLoading={loading}>
@@ -19,7 +20,7 @@ const OAuthButtons = () => {
       </Button>
 
       <Button variant='oauth' mb={2}>
-        <Image src='/images/GitHubLogo.png' height='25px' mr={1}></Image>
+        <Image src='/images/GitHubLogo.png' height='25px' mr={1} onClick={() => signIn()}></Image>
         Continue with GitHub
       </Button>
       {error && (

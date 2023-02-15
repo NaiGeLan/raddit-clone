@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { signOut, User } from 'firebase/auth';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { FaRedditSquare } from 'react-icons/fa';
 import { VscAccount } from 'react-icons/vsc';
@@ -32,6 +32,8 @@ type UserMenuProps = {
 
 const Directory: React.FC<UserMenuProps> = ({ user }) => {
   const setAuthModalState = useSetRecoilState(authModalState);
+  console.log(user);
+  
   return (
     <Menu>
       <MenuButton

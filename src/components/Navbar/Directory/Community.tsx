@@ -1,19 +1,37 @@
 import { communityState } from "@/src/atoms/communityAtom";
 import { auth } from "@/src/firebase/clientApp";
 import { Flex, MenuItem, Icon, Box, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { GrAdd } from "react-icons/gr";
 import { FaReddit } from "react-icons/fa";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import CreateCommunityModal from "../../Modal/CreateCommunity/CreateCommunityModal";
 import MenuListItem from "./MenuListItem";
-
+import  {get} from '@/src/util/request'
+import { directoryMenuState } from "@/src/atoms/directoryMenuAtom";
 const Community = () => {
   const [open, setOpen] = useState(false)
   const [user] = useAuthState(auth);
-  console.log(user)
-  
+  const [directoryMenu,setDirectoryMenu] = useRecoilState(directoryMenuState)
+  // useEffect(() =>{
+  //   async function getAll(){
+  //     console.log(user?.uid);
+  //     const Id = user?.uid
+  //     const res = await get(`community/getAll/${Id}`)
+  //     console.log(res);
+  //     // setDirectoryMenu((oldVal) => [
+  //     //   ...oldVal,
+        
+  //     // ])
+  //   }
+  //   try {
+  //     getAll()
+  //   }catch(error){
+  //     console.log(error);
+      
+  //   } 
+  // },[])
   const mySnippets = useRecoilValue(communityState).mySnippets
   return (
     <>
